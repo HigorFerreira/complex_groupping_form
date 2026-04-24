@@ -2,7 +2,7 @@ import './App.css'
 import { Fragment, useEffect, useRef } from 'react'
 import { useData, useDataOperations } from '@/lib/complex_form/exports/hooks'
 
-type FormGroups = 'list' | 'pernsonal' | (string & {})
+type FormGroups = 'list' | 'pernsonal' | 'once' | (string & {})
 
 export default function App() {
 	const callOnce = useRef(false)
@@ -32,6 +32,14 @@ export default function App() {
 						</div>
 					</Fragment>
 				}) ?? [] }
+			</div>
+		</div>
+		<div className='flex justify-center mt-10'>
+			<div>
+				<div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
+					<label htmlFor="test">Once test</label>
+					<input id='test' type="text" value={data?.once?.[0]?.value??''} onChange={e => dop.first('once').update('once', { value: e.target.value })} />
+				</div>
 			</div>
 		</div>
 	</div>
