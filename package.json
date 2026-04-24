@@ -5,14 +5,14 @@
 	"type": "module",
 	"exports": {
 		"./provider": {
+			"types": "./dist/provider.d.ts",
 			"import": "./dist/provider.js",
-			"require": "./dist/provider.cjs",
-			"types": "./dist/provider.d.ts"
+			"require": "./dist/provider.cjs"
 		},
 		"./hooks": {
+			"types": "./dist/hooks.d.ts",
 			"import": "./dist/hooks.js",
-			"require": "./dist/hooks.cjs",
-			"types": "./dist/hooks.d.ts"
+			"require": "./dist/hooks.cjs"
 		}
 	},
 	"files": ["dist"],
