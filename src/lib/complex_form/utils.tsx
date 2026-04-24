@@ -98,7 +98,7 @@ export class DataOperations<
             if (old_item_index < 0) {
                 return {
                     ...prev,
-                    [group]: [...prevGroup, { ...data, key: data.key ?? old_item.key ?? uuidv4() }],
+                    [group]: [...prevGroup, { ...data, key: data.key ?? old_item?.key ?? uuidv4() }],
                 }
             }
             const currentItem = prevGroup[old_item_index] ?? {}

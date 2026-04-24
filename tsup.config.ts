@@ -13,7 +13,5 @@ export default defineConfig(
         treeshake: true,
         clean: true,
         external: ['react', 'react-dom'],
-        jsx: 'transform',
-        jsxImportSource: 'react',
     }
 )
