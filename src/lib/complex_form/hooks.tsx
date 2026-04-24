@@ -46,7 +46,7 @@ export function makeHooks<TGroups extends string>(
                 })
                 initialDataSet.current = true
             }
-        }, [ initialDataSet, data ])    
+        }, [ initialDataSet, data, setData ])    
     }
 
     return { useData, useDataOperations, useInitialData }

@@ -1,6 +1,7 @@
 import {
     useData as __useData,
     useDataOperations as __useDataOperations,
+    useInitialData as __useInitialData,
 } from '.'
 import type { DataState } from '../types'
 import type { DataOperations } from '../utils'
@@ -11,4 +12,8 @@ export function useData<TGroups extends string>(){
 
 export function useDataOperations<TGroups extends string>(){
     return __useDataOperations() as unknown as DataOperations<TGroups>
+}
+
+export function useInitialData(data?: Parameters<typeof __useInitialData>[0]){
+    return __useInitialData(data)
 }

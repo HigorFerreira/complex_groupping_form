@@ -3,11 +3,13 @@ import { createForm } from "..";
 const {
     Provider,
     useData,
-    useDataOperations
+    useDataOperations,
+    useInitialData,
 } = createForm()
 
 export {
     Provider,
     useData,
     useDataOperations,
+    useInitialData,
 }
