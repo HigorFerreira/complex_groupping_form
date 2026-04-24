@@ -15,6 +15,7 @@
 			"types": "./dist/hooks.d.ts"
 		}
 	},
+	"files": ["dist"],
 	"main": "./dist/provider.cjs",
 	"module": "./dist/provider.js",
 	"types": "./dist/provider.d.ts",
