@@ -9,6 +9,13 @@ function makeRef(data: Partial<DataState<G>> = {}) {
 }
 
 describe('DataOperations.getByKey', () => {
+    it('collect() retorna [{ key }, -1] quando o grupo não existe', () => {
+        const dop = new DataOperations<G>(makeRef({ }), vi.fn())
+        const result = dop.getByKey('grupo_a', 'x').collect()
+        // key é preservada para que update() a use ao inserir o novo item
+        expect(result).toEqual([{ key: 'x' }, -1])
+    })
+
     it('collect() retorna [{ key }, -1] quando grupo está vazio', () => {
         const dop = new DataOperations<G>(makeRef({ grupo_a: [] }), vi.fn())
         const result = dop.getByKey('grupo_a', 'x').collect()
