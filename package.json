@@ -3,6 +3,21 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"exports": {
+		"./provider": {
+			"import": "./dist/provider.js",
+			"require": "./dist/provider.cjs",
+			"types": "./dist/provider.d.ts"
+		},
+		"./hooks": {
+			"import": "./dist/hooks.js",
+			"require": "./dist/hooks.cjs",
+			"types": "./dist/hooks.d.ts"
+		}
+	},
+	"main": "./dist/provider.cjs",
+	"module": "./dist/provider.js",
+	"types": "./dist/provider.d.ts",
 	"scripts": {
 		"dev": "vite",
 		"build": "tsup",
