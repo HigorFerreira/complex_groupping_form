@@ -1,13 +1,13 @@
-import { createForm } from '@/lib/complex_form'
 import './App.css'
-import { useEffect, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
+import { useData, useDataOperations } from '@/lib/complex_form/exports/hooks'
 
-const { Provider, useData, useDataOperations } = createForm<'list'>()
+type FormGroups = 'list' | 'pernsonal' | (string & {})
 
-function App() {
+export default function App() {
 	const callOnce = useRef(false)
-	const data = useData()
-	const dop = useDataOperations()
+	const data = useData<FormGroups>()
+	const dop = useDataOperations<FormGroups>()
 
 	useEffect(() => {
 		if(!callOnce.current){
@@ -25,18 +25,14 @@ function App() {
 			<div className='flex flex-col gap-4'>
 				{ data?.list?.map(({ key, label, value }) => {
 					const k = `ipt:${key}`
-					return <div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
-						<label htmlFor={k}>{ label }</label>
-						<input id={k} type="text" value={value} onChange={e => dop.getByKey('list', key??'').update('list', { value: e.target.value })} />
-					</div>
+					return <Fragment key={key}>
+						<div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
+							<label htmlFor={k}>{ label }</label>
+							<input id={k} type="text" value={value} onChange={e => dop.getByKey('list', key??'').update('list', { value: e.target.value })} />
+						</div>
+					</Fragment>
 				}) ?? [] }
 			</div>
 		</div>
 	</div>
-}
-
-export default function Wrapper(){
-	return <Provider>
-		<App />
-	</Provider>
 }
