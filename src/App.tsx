@@ -38,7 +38,7 @@ export default function App() {
 			<div>
 				<div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
 					<label htmlFor="test">Once test</label>
-					<input id='test' type="text" value={data?.once?.[0]?.value??''} onChange={e => dop.first('once').update('once', { key: 'test', value: e.target.value })} />
+					<input id='test' type="text" value={ dop.first('once').collect()?.value??'' } onChange={e => dop.first('once').update('once', { key: 'test', value: e.target.value })} />
 				</div>
 			</div>
 		</div>
