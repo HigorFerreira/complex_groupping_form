@@ -7,6 +7,7 @@ export enum LastExec {
     GetByKey,
     Update,
     Append,
+    First,
 }
 
 type CollectReturnMap = {
@@ -14,6 +15,7 @@ type CollectReturnMap = {
     [LastExec.GetByKey]: [Partial<Item>, number]
     [LastExec.Update]: undefined
     [LastExec.Append]: undefined
+    [LastExec.First]: Partial<Item> | undefined
 }
 
 export class DataOperations<
@@ -50,6 +52,16 @@ export class DataOperations<
 
         return new DataOperations<TGroups, LastExec.Append>(
             this.dataRef, this.setData, [undefined], LastExec.Append
+        )
+    }
+
+    public first(group: TGroups): DataOperations<TGroups, LastExec.Append> {
+        const data = this.dataRef.current
+        const first_data = data?.[group]?.[0]
+        const chainedStack = [ first_data ]
+
+        return new DataOperations<TGroups, LastExec.Append>(
+            this.dataRef, this.setData, chainedStack, LastExec.Append
         )
     }
 
