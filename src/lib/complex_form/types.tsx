@@ -1,9 +1,10 @@
-import type { Dispatch, SetStateAction } from "react"
+import type { Dispatch, RefObject, SetStateAction } from "react"
 
 
 export type ContextType<TGroups extends string> = {
     data: DataState<TGroups>
     setData: Dispatch<SetStateAction<DataState<TGroups>>>
+    initialDataSet: RefObject<boolean>
 }
 
 export type Item = {

@@ -1,5 +1,5 @@
-import { useContext, useRef, type Context } from 'react'
-import type { ContextType } from './types'
+import { useContext, useEffect, useRef, type Context } from 'react'
+import type { ContextType, DataState } from './types'
 import { DataOperations } from './utils'
 
 export function makeHooks<TGroups extends string>(
@@ -32,5 +32,22 @@ export function makeHooks<TGroups extends string>(
         return dopRef.current
     }
 
-    return { useData, useDataOperations }
+    function useInitialData(data?: Partial<DataState<TGroups>>){
+        const ctx = useContext(Context)
+        if (!ctx) throw new Error('useInitialData deve ser usado dentro do Provider')
+        const { setData, initialDataSet } = ctx
+        useEffect(() => {
+            if(data && Object.keys(data).length > 0 && !initialDataSet.current){
+                setData(prev => {
+                    return {
+                        ...prev,
+                        ...data,
+                    }
+                })
+                initialDataSet.current = true
+            }
+        }, [ initialDataSet, data ])    
+    }
+
+    return { useData, useDataOperations, useInitialData }
 }
