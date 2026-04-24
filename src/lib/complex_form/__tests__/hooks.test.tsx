@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { createForm } from '../index'
 import { DataOperations } from '../utils'
+import type { Item } from '../types'
 
 type G = 'pessoal' | 'endereco'
 
@@ -30,6 +31,63 @@ describe('useData', () => {
         })
 
         expect(result.current.data?.pessoal?.[0]?.value).toBe('Mylene')
+    })
+})
+
+describe('useDataOperations - update', () => {
+    it('should set a new item using updade', () => {
+        const item: Partial<Item> = { value: 'item' }
+        const { result } = renderHook(() => {
+            const dop = form.useDataOperations()
+            const data = form.useData()
+            return { data, dop }
+        }, { wrapper: form.Provider })
+
+        act(() => {
+            const { dop } = result.current
+            dop.update('pessoal', item)
+        })
+
+        const { data } = result.current
+        expect(data?.pessoal).toBeDefined()
+        
+        let item_from_first: unknown
+        act(() => {
+            const { dop } = result.current
+            item_from_first = dop.first('pessoal').collect()
+        })
+        expect(item_from_first).toBeDefined()
+        expect(item_from_first).toMatchObject(item)
+    })
+
+    describe('should work with first', () => {
+        it('should use first to update', () => {
+            const item: Partial<Item> = { value: 'item' }
+            const { result } = renderHook(() => {
+                const dop = form.useDataOperations()
+                const data = form.useData()
+                return { data, dop }
+            }, { wrapper: form.Provider })
+
+            act(() => { result.current.dop.append('endereco', item) })
+            act(() => {
+                const data = result.current.data
+                expect(data?.endereco).toBeDefined()
+                expect(data?.endereco).toBeInstanceOf(Array)
+            })
+            act(() => {
+                const first = result.current.dop.first('endereco')
+                expect(first).toBeDefined()
+                const collect = first.collect()
+                expect(collect).toMatchObject(item)
+                first.update('endereco', { value: 'changed_item' })
+            })
+            act(() => {
+                const { dop } = result.current
+                const first_item = dop.first('endereco').collect()
+                expect(first_item).toMatchObject({ value: 'changed_item' })
+            })
+        })
     })
 })
 

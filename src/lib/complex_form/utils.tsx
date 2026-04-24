@@ -55,13 +55,13 @@ export class DataOperations<
         )
     }
 
-    public first(group: TGroups): DataOperations<TGroups, LastExec.Append> {
+    public first(group: TGroups): DataOperations<TGroups, LastExec.First> {
         const data = this.dataRef.current
         const first_data = data?.[group]?.[0]
         const chainedStack = [ first_data ]
 
-        return new DataOperations<TGroups, LastExec.Append>(
-            this.dataRef, this.setData, chainedStack, LastExec.Append
+        return new DataOperations<TGroups, LastExec.First>(
+            this.dataRef, this.setData, chainedStack, LastExec.First
         )
     }
 
@@ -84,10 +84,12 @@ export class DataOperations<
     }
 
     public update(group: TGroups, data: Partial<Item>): DataOperations<TGroups, LastExec.Update> {
-        const [old_item, old_item_index]: [Partial<Item>, number] =
+        const [old_item, old_item_index]: [ Partial<Item> | undefined, number ] =
             this.last_exec === LastExec.GetByKey
                 ? (this.stack.pop() as CollectReturnMap[LastExec.GetByKey])
-                : [{}, -1]
+                : this.last_exec === LastExec.First
+                    ? [  (this.stack.pop() as CollectReturnMap[LastExec.First]), 0  ]
+                    : [{}, -1]
 
         // Functional update: lê currentItem do prev (não de old_item stale)
         // old_item_index indica ONDE atualizar; o conteúdo vem sempre do prev
