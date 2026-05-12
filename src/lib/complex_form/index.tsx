@@ -6,6 +6,7 @@ import type {
     DataArrItem,
     DataObjItems,
     DataGroups,
+    DataItemGroup,
 } from './types'
 
 export function createForm<TGroups extends string, TItem extends Partial<BaseItem>>() {
@@ -17,10 +18,11 @@ export function createForm<TGroups extends string, TItem extends Partial<BaseIte
         const [ data_arr, setDataArr ] = useState<DataArrItem< TItem >>([])
         const [ data_obj, setDataObj ] = useState<DataObjItems< TItem >>({})
         const [ group_list, setGroupList ] = useState<DataGroups< TGroups, TItem >>({})
+        const [ item_group, setItemGroup ] = useState<DataItemGroup< TGroups >>({})
 
-        useEffect(() => console.log({ data_arr, data_obj, group_list }), [ data_arr, data_obj, group_list ])
+        useEffect(() => console.log({ data_arr, data_obj, group_list, item_group }), [ data_arr, data_obj, group_list, item_group ])
 
-        return <Context value={{ initialDataSet, data_arr, setDataArr, data_obj, setDataObj, group_list, setGroupList }} >
+        return <Context value={{ initialDataSet, data_arr, setDataArr, data_obj, setDataObj, group_list, setGroupList, item_group, setItemGroup, }} >
             { children }
         </Context>
     }

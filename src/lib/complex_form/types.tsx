@@ -4,6 +4,7 @@ import type { Dispatch, RefObject, SetStateAction } from "react"
 export type DataArrItem<TItem extends Partial<BaseItem>> = Array<TItem>
 export type DataObjItems<TItem extends Partial<BaseItem>> = Record<string, Partial<TItem>>
 export type DataGroups<TGroups extends string, TItem extends Partial<BaseItem>> = Partial< Record<TGroups, Array< TItem >> >
+export type DataItemGroup<TGroups extends string> = Partial<Record<string, TGroups>>
 
 export type ContextType<TGroups extends string, TItem extends Partial<BaseItem>> = {
     data_arr: DataArrItem<TItem>
@@ -12,6 +13,8 @@ export type ContextType<TGroups extends string, TItem extends Partial<BaseItem>>
     setDataObj: Dispatch<SetStateAction< DataObjItems<TItem> >>
     group_list: DataGroups<TGroups, TItem>
     setGroupList: Dispatch<SetStateAction< DataGroups<TGroups, TItem> >>
+    item_group: DataItemGroup<TGroups>
+    setItemGroup: Dispatch<SetStateAction< DataItemGroup<TGroups> >>
     initialDataSet: RefObject<boolean>
 }
 

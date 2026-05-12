@@ -15,7 +15,7 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
 
 
     function useAppend() {
-        const { setDataArr, setDataObj, setGroupList } = useContext('useAppend', Context)
+        const { setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useAppend', Context)
         const key = uuidv4()
 
         function append(group: TGroups, item: Partial<Omit<TItem, 'key'>>) {
@@ -39,11 +39,45 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
                     { ...item, key }
                 ]
             }))
+            setItemGroup?.(prev => ({
+                ...prev,
+                [key]: group,
+            }))
         }
         
         return append
     }
 
+    function useRemove(){
+        const { data_obj, data_arr, group_list, item_group, setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useRemove', Context)
+        function remove(key: string){
+            const item = data_obj?.[key]
+            if(!item) return null
+            const removed_item = { ...item }
 
-    return { useAppend }
+            const new_data_obj = { ...(data_obj??{}) }
+            const new_data_arr = [ ...(data_arr??[]) ]
+            const new_group_list = { ...(group_list??{}) } as typeof group_list
+            const new_item_group = { ...(item_group??{}) } as typeof item_group
+
+            delete new_data_obj[key]
+            new_data_arr.splice(new_data_arr.findIndex(item => item.key === key), 1)
+            {
+                const group = new_group_list?.[new_item_group?.[key] as TGroups]
+                group?.splice(group.findIndex(item => item.key === key), 1)                
+            }
+            delete new_item_group?.[key]
+            
+            setDataArr?.(new_data_arr)
+            setDataObj?.(new_data_obj)
+            setGroupList?.(new_group_list??{})
+            setItemGroup?.(new_item_group??{})
+
+            return removed_item
+        }
+        return remove
+    }
+
+
+    return { useAppend, useRemove }
 }
