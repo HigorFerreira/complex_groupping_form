@@ -3,9 +3,25 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"exports": {
+		"./provider": {
+			"types": "./dist/provider.d.ts",
+			"import": "./dist/provider.js",
+			"require": "./dist/provider.cjs"
+		},
+		"./hooks": {
+			"types": "./dist/hooks.d.ts",
+			"import": "./dist/hooks.js",
+			"require": "./dist/hooks.cjs"
+		}
+	},
+	"files": ["dist"],
+	"main": "./dist/provider.cjs",
+	"module": "./dist/provider.js",
+	"types": "./dist/provider.d.ts",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc -b && vite build",
+		"build": "tsup",
 		"lint": "eslint .",
 		"preview": "vite preview",
 		"test": "vitest",
@@ -32,6 +48,7 @@
 		"eslint-plugin-react-refresh": "^0.5.2",
 		"globals": "^17.5.0",
 		"jsdom": "^29.0.2",
+		"tsup": "^8.5.1",
 		"typescript": "~6.0.2",
 		"typescript-eslint": "^8.58.2",
 		"vite": "^8.0.10",
