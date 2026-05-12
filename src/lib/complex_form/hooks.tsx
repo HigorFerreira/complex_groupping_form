@@ -78,6 +78,30 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
         return remove
     }
 
+    function useUpdate(){
+        const { data_obj, setDataObj } = useContext('useUpdate', Context)
+        const append = useAppend()
+        function update(key: string, group: TGroups, item: Partial<Omit<TItem, 'key'>>) {
+            const current_item = data_obj?.[key]
+            if(!current_item) {
+                append(group, item)
+            }
+            else {
+                setDataObj?.(prev => {
+                    const current_item = prev?.[key]
+                    return {
+                        ...prev,
+                        [key]: {
+                            ...current_item,
+                            ...item
+                        }
+                    }
+                })
+            }
+        }
 
-    return { useAppend, useRemove }
+        return update
+    }
+
+    return { useAppend, useRemove, useUpdate }
 }
