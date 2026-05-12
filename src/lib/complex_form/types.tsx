@@ -16,3 +16,12 @@ export type ContextType<TGroups extends string, TItem extends Partial<BaseItem>>
 }
 
 export type BaseItem = { key: string } & object
+
+export type DataOperationsOpts<TGroups extends string, TItem extends Partial<BaseItem>> = {
+    data_arr_ref: RefObject< DataArrItem<TItem> >
+    setDataArr: Dispatch<SetStateAction< DataArrItem<TItem> >>
+    data_obj_ref: RefObject< DataObjItems<TItem> >
+    setDataObj: Dispatch<SetStateAction< DataObjItems<TItem> >>
+    group_list_ref: RefObject< DataGroups<TGroups, TItem> >
+    setGroupList: Dispatch<SetStateAction< DataGroups<TGroups, TItem> >>
+}

@@ -10,6 +10,7 @@ import type {
 
 export function createForm<TGroups extends string, TItem extends Partial<BaseItem>>() {
     const Context = createContext<TGroups, TItem>()
+    const hooks = makeHooks(Context)
 
     function Provider({ children }: PropsWithChildren) {
         const initialDataSet = useRef(false)
@@ -22,5 +23,5 @@ export function createForm<TGroups extends string, TItem extends Partial<BaseIte
         </Context>
     }
 
-    return { Provider }
+    return { Provider, ...hooks }
 }
