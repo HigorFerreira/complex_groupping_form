@@ -1,11 +1,15 @@
-import { useAppend } from '@/form'
+import { useAppend, useRemove } from '@/form'
 
 import './App.css'
+import { useState } from 'react'
 
 
 export default function App() {
 
 	const append = useAppend()
+	const remove = useRemove()
+
+	const [ field, setField ] = useState('')
 
 	return <div>
 		<h1>Something</h1>
@@ -24,9 +28,18 @@ export default function App() {
 		</div>
 		<div className='flex justify-center mt-10'>
 			<div className=''>
-				<div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
-					<label htmlFor="test">Once test</label>
-					<input id='test' type="text" />
+				<div className='flex gap-4'>
+					<div className='flex flex-col p-4 rounded-[12px] border-black border-1 [&_input]:px-4 [&_input]:py-2'>
+						<label htmlFor="test">Once test</label>
+						<input id='test' type="text" value={field} onChange={(e) => setField(e.target.value)} />
+					</div>
+					<div>
+						<button className='cursor-pointer p-3' onClick={() => {
+							remove(field)
+						}}>
+							Remove
+						</button>
+					</div>
 				</div>
 				<div>
 					<button className='cursor-pointer p-6' onClick={() => {
