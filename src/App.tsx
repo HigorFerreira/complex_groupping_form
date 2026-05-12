@@ -5,7 +5,7 @@ import './App.css'
 
 export default function App() {
 
-	// const append = useAppend()
+	const append = useAppend()
 
 	return <div>
 		<h1>Something</h1>
@@ -29,7 +29,11 @@ export default function App() {
 					<input id='test' type="text" />
 				</div>
 				<div>
-					<button className='cursor-pointer p-6'>Append</button>
+					<button className='cursor-pointer p-6' onClick={() => {
+						append('group1', { title: 'Test1', label: 'Label' })
+					}}>
+						Append
+					</button>
 				</div>
 			</div>
 		</div>
