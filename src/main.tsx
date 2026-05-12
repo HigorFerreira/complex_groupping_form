@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-import ComplexFormProvider from '@/lib/complex_form/exports/provider.tsx'
+import { Provider } from '@/form'
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<ComplexFormProvider>
+		<Provider>
 			<App />
-		</ComplexFormProvider>
+		</Provider>
 	</StrictMode>,
 )
