@@ -1,19 +1,18 @@
 import type { Dispatch, RefObject, SetStateAction } from "react"
 
 
-export type ContextType<TGroups extends string> = {
-    data: DataState<TGroups>
-    setData: Dispatch<SetStateAction<DataState<TGroups>>>
+export type DataArrItem<TItem extends Partial<BaseItem>> = Array<TItem>
+export type DataObjItems<TItem extends Partial<BaseItem>> = Record<string, Partial<TItem>>
+export type DataGroups<TGroups extends string, TItem extends Partial<BaseItem>> = Partial< Record<TGroups, Array< TItem >> >
+
+export type ContextType<TGroups extends string, TItem extends Partial<BaseItem>> = {
+    data_arr: DataArrItem<TItem>
+    setDataArr: Dispatch<SetStateAction< DataArrItem<TItem> >>
+    data_obj: DataObjItems<TItem>
+    setDataObj: Dispatch<SetStateAction< DataObjItems<TItem> >>
+    group_list: DataGroups<TGroups, TItem>
+    setGroupList: Dispatch<SetStateAction< DataGroups<TGroups, TItem> >>
     initialDataSet: RefObject<boolean>
 }
 
-export type Item = {
-    key: string
-    label: string
-    value: string
-    extra_value: string
-    options: string
-    image: string
-}
-
-export type DataState<TGroups extends string> = Record<TGroups, Array<Partial<Item>>>
+export type BaseItem = { key: string } & object

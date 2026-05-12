@@ -1,20 +1,26 @@
 import { useRef, useState, type PropsWithChildren } from 'react'
-import { createFormContext } from './context'
+import { createContext } from './context'
 import { makeHooks } from './hooks'
-import type { DataState } from './types'
+import type {
+    BaseItem,
+    DataArrItem,
+    DataObjItems,
+    DataGroups,
+} from './types'
 
-export function createForm<TGroups extends string>() {
-    const Context = createFormContext<TGroups>()
-    const hooks   = makeHooks(Context)
+export function createForm<TGroups extends string, TItem extends Partial<BaseItem>>() {
+    const Context = createContext<TGroups, TItem>()
 
     function Provider({ children }: PropsWithChildren) {
         const initialDataSet = useRef(false)
-        const [ data, setData ] = useState<DataState<TGroups>>({} as DataState<TGroups>)
+        const [ data_arr, setDataArr ] = useState<DataArrItem< TItem >>([])
+        const [ data_obj, setDataObj ] = useState<DataObjItems< TItem >>({})
+        const [ group_list, setGroupList ] = useState<DataGroups< TGroups, TItem >>({})
 
-        return <Context value={{ data, setData, initialDataSet, }}>
+        return <Context value={{ initialDataSet, data_arr, setDataArr, data_obj, setDataObj, group_list, setGroupList }} >
             { children }
         </Context>
     }
 
-    return { Provider, ...hooks }
+    return { Provider }
 }

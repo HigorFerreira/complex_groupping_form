@@ -1,6 +1,6 @@
-import { createContext } from 'react'
-import type { ContextType } from './types'
+import { createContext as reactCreateContext } from 'react'
+import type { ContextType, BaseItem } from './types'
 
-export function createFormContext<TGroups extends string>() {
-    return createContext<ContextType<TGroups> | null>(null)
+export function createContext<TGroups extends string, TItem extends Partial<BaseItem>>() {
+    return reactCreateContext<ContextType< TGroups, TItem > | null>(null)
 }
