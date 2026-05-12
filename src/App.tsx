@@ -1,4 +1,4 @@
-import { useAppend, useRemove } from '@/form'
+import { useAppend, useRemove, useUpdate } from '@/form/hooks'
 
 import './App.css'
 import { useState } from 'react'
