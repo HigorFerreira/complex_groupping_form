@@ -1,1 +1,3 @@
-export { Provider } from '.'
+import Form from '.'
+const { Provider } = Form
+export { Provider }
