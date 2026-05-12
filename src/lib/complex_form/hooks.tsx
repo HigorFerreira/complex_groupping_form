@@ -1,4 +1,4 @@
-import { useContext as useReactContext, useEffect, useMemo, useRef, type Context } from 'react'
+import { useContext as useReactContext, useEffect, useMemo, useRef, type Context, useCallback } from 'react'
 import type { ContextType, BaseItem } from './types'
 // import { DataOperations } from './utils'
 import { v4 as uuidv4 } from 'uuid'
@@ -13,6 +13,33 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
     Context: Context< ContextType< TGroups, TItem > | null >
 ) {
 
+    function useDataStructure() {
+        const { group_list } = useContext('useDataStructure', Context)
+        const ret: NonNullable<typeof group_list> = !group_list
+            ? {}
+            : group_list
+        return ret
+    }
+
+    function useData() {
+        const { data_obj, group_list } = useContext('useData', Context)
+        const get_data = useCallback((key: string | null = null) => {
+            if(key) return data_obj?.[key]
+            const data = {} as NonNullable< typeof group_list >
+            console.log({ group_list })
+            Object.keys(group_list??{}).forEach(key => {
+                console.log(key)
+                const _key = key as TGroups
+                // @ts-expect-error Annotation
+                data[_key] = data[_key]?.map(({ key }) => {
+                    return data_obj?.[key??'']
+                })??[]
+            })
+            console.log({ data })
+        }, [ data_obj, group_list ])
+
+        return get_data
+    }
 
     function useAppend() {
         const { setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useAppend', Context)
@@ -103,5 +130,5 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
         return update
     }
 
-    return { useAppend, useRemove, useUpdate }
+    return { useAppend, useRemove, useUpdate, useDataStructure, useData }
 }
