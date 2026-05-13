@@ -15,7 +15,10 @@ export default function App() {
 
 	const form_structure = useDataStructure()
 
-	// useEffect(() => console.log('App', { data: get_data() }), [ get_data ])
+	// useEffect(() => {
+	// 	const data = get_data()
+	// 	console.log({ data })
+	// }, [ get_data ])
 
 	return <div>
 		<h1>Something</h1>

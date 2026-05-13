@@ -1,5 +1,5 @@
-import { useContext as useReactContext, useEffect, useMemo, useRef, type Context, useCallback } from 'react'
-import type { ContextType, BaseItem } from './types'
+import { useContext as useReactContext,/* useEffect, useMemo, useRef, */type Context, useCallback } from 'react'
+import type { ContextType, BaseItem, GetDataFunction,/* DataObjItems*/ } from './types'
 // import { DataOperations } from './utils'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -23,20 +23,29 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
 
     function useData() {
         const { data_obj, group_list } = useContext('useData', Context)
-        const get_data = useCallback((key: string | null = null) => {
-            // console.log('useData', { data_obj, group_list })
-            if(key) return data_obj?.[key]
-            const data = {} as NonNullable< typeof group_list >
-            Object.keys(group_list??{}).forEach(key => {
-                const _key = key as TGroups
-                // @ts-expect-error Annotation
-                data[_key] = group_list?.[_key]?.map(item => {
-                    return data_obj?.[item.key??'']
-                })??[]
-            })
+        const get_data = useCallback(
+            ((key: string | null = null): any => {
+                // 1. Handle string key (returns single item or undefined)
+                if (typeof key === "string") {
+                    return data_obj?.[key];
+                }
 
-            return data
-        }, [ data_obj, group_list ])
+                // 2. Handle null/undefined (returns the grouped record)
+                const data = {} as Partial<Record<TGroups, TItem[]>>;
+                
+                if (group_list) {
+                    (Object.keys(group_list) as TGroups[]).forEach((groupKey) => {
+                        // @ts-expect-error
+                        data[groupKey] = group_list[groupKey]?.map(item => {
+                            return data_obj?.[item.key ?? ''];
+                        }) ?? [];
+                    });
+                }
+
+                return data;
+            }) as GetDataFunction<TGroups, TItem>, // Cast to your overloaded type here
+            [data_obj, group_list]
+        );
 
         return get_data
     }

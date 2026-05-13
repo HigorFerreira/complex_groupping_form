@@ -28,3 +28,9 @@ export type DataOperationsOpts<TGroups extends string, TItem extends Partial<Bas
     group_list_ref: RefObject< DataGroups<TGroups, TItem> >
     setGroupList: Dispatch<SetStateAction< DataGroups<TGroups, TItem> >>
 }
+
+export type GetDataFunction<TGroups extends string, TItem extends Partial<BaseItem>> = 
+    ((key: string) => TItem | undefined) &
+    ((key: null) => Partial<Record<TGroups, Array<TItem>>>) &
+    ((key?: undefined) => Partial<Record<TGroups, Array<TItem>>>) &
+    ((key?: any) => any);
