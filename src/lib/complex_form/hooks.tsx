@@ -24,18 +24,18 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
     function useData() {
         const { data_obj, group_list } = useContext('useData', Context)
         const get_data = useCallback((key: string | null = null) => {
+            // console.log('useData', { data_obj, group_list })
             if(key) return data_obj?.[key]
             const data = {} as NonNullable< typeof group_list >
-            console.log({ group_list })
             Object.keys(group_list??{}).forEach(key => {
-                console.log(key)
                 const _key = key as TGroups
                 // @ts-expect-error Annotation
-                data[_key] = data[_key]?.map(({ key }) => {
-                    return data_obj?.[key??'']
+                data[_key] = group_list?.[_key]?.map(item => {
+                    return data_obj?.[item.key??'']
                 })??[]
             })
-            console.log({ data })
+
+            return data
         }, [ data_obj, group_list ])
 
         return get_data

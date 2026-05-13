@@ -15,7 +15,7 @@ export default function App() {
 
 	const form_structure = useDataStructure()
 
-	useEffect(() => console.log({ data: get_data() }), [ get_data ])
+	// useEffect(() => console.log('App', { data: get_data() }), [ get_data ])
 
 	return <div>
 		<h1>Something</h1>
@@ -61,8 +61,8 @@ export default function App() {
 			<h4>Group 1</h4>
 			{ form_structure?.group1?.map(item => {
 				return <div key={item.key} className='flex gap-2' >
-					<input type="text" placeholder='Title' value={get_data('group1')?.title} onChange={e => update(item.key, 'group1', { title: e.target.value })} />
-					<input type="text" placeholder='Label' value={get_data('group1')?.label} onChange={e => update(item.key, 'group1', { label: e.target.value })} />
+					<input type="text" placeholder='Title' value={get_data(item.key)?.title} onChange={e => update(item.key, 'group1', { title: e.target.value })} />
+					<input type="text" placeholder='Label' value={get_data(item.key)?.label} onChange={e => update(item.key, 'group1', { label: e.target.value })} />
 				</div>
 			}) }
 		</div>
