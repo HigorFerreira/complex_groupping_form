@@ -1,6 +1,6 @@
 {
 	"name": "complex_groupping_form",
-	"version": "1.0.001",
+	"version": "1.0.1001",
 	"type": "module",
 	"exports": {
 		".": {
