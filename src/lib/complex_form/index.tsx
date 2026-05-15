@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PropsWithChildren } from 'react'
+import { useRef, useState, type PropsWithChildren } from 'react'
 import { createContext } from './context'
 import { makeHooks } from './hooks'
 import type {
