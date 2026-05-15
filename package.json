@@ -23,6 +23,10 @@
 		"test": "vitest",
 		"test:run": "vitest run"
 	},
+	"peerDependencies": {
+		"react": ">=19",
+		"react-dom": ">=19"
+	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.2.4",
 		"react": "^19.2.5",

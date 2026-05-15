@@ -34,8 +34,11 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: 'src/lib/complex_form/exports/index.ts',
-			formats: ['es', 'cjs'],
+			formats: [ 'es', 'cjs' ],
 			fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
 		},
+		rolldownOptions: {
+			external: [ 'react', 'react-dom', 'react/jsx-runtime' ],
+		}
 	},
 })
