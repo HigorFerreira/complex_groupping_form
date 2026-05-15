@@ -1,6 +1,5 @@
 {
 	"name": "complex_groupping_form",
-	"private": true,
 	"version": "1.0.0",
 	"type": "module",
 	"exports": {
@@ -14,6 +13,7 @@
 	"main": "./dist/provider.cjs",
 	"module": "./dist/provider.js",
 	"types": "./dist/provider.d.ts",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite",
 		"build:tsup": "tsup",
