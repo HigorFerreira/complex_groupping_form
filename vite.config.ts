@@ -33,7 +33,11 @@ export default defineConfig({
 	},
 	build: {
 		lib: {
-			entry: 'src/lib/complex_form/exports/index.ts',
+			entry: {
+				index: 'src/lib/complex_form/exports/index.ts',
+				// types: 'src/lib/complex_form/types.tsx',
+
+			},
 			formats: [ 'es', 'cjs' ],
 			fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
 		},

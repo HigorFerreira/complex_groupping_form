@@ -1,12 +1,15 @@
 {
 	"name": "complex_groupping_form",
-	"version": "1.0.1002",
+	"version": "1.0.1003",
 	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/provider.d.ts",
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs"
+		},
+		"./types": {
+			"types": "./dist/src/lib/complex_form/types.d.ts"
 		}
 	},
 	"files": ["dist"],
