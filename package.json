@@ -5,13 +5,13 @@
 	"exports": {
 		".": {
 			"types": "./dist/provider.d.ts",
-			"import": "./dist/provider.mjs",
-			"require": "./dist/provider.cjs"
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
 		}
 	},
 	"files": ["dist"],
-	"main": "./dist/provider.cjs",
-	"module": "./dist/provider.js",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
 	"types": "./dist/provider.d.ts",
 	"license": "MIT",
 	"scripts": {
