@@ -52,9 +52,8 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
 
     function useAppend() {
         const { setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useAppend', Context)
-        const key = uuidv4()
-
         function append(group: TGroups, item: Partial<Omit<TItem, 'key'>>) {
+            const key = uuidv4()
             // @ts-expect-error Annotation throuble
             setDataArr?.(prev => [
                 ...prev,
