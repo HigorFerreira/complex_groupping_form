@@ -113,6 +113,41 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
         return remove
     }
 
+    function useSetInitialData() {
+        const { initialDataSet, setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useSetInitialData', Context)
+
+        function setInitialData(grouped_data: Partial<Record<TGroups, Array<Partial<Omit<TItem, 'key'>> & { key?: string }>>>) {
+            if (initialDataSet?.current) return
+
+            const new_data_arr: Array<TItem> = []
+            const new_data_obj: Record<string, Partial<TItem>> = {}
+            const new_group_list: Partial<Record<TGroups, Array<TItem>>> = {}
+            const new_item_group: Partial<Record<string, TGroups>> = {}
+
+            ;(Object.keys(grouped_data) as TGroups[]).forEach(group => {
+                const items = grouped_data[group] ?? []
+                new_group_list[group] = []
+                items.forEach(item => {
+                    const key = item.key ?? uuidv4()
+                    const full_item = { ...item, key } as TItem
+                    new_data_arr.push(full_item)
+                    new_data_obj[key] = full_item
+                    new_group_list[group]!.push(full_item)
+                    new_item_group[key] = group
+                })
+            })
+
+            setDataArr?.(new_data_arr)
+            setDataObj?.(new_data_obj)
+            setGroupList?.(new_group_list)
+            setItemGroup?.(new_item_group)
+
+            if (initialDataSet) initialDataSet.current = true
+        }
+
+        return setInitialData
+    }
+
     function useUpdate(){
         const { data_obj, setDataObj } = useContext('useUpdate', Context)
         const append = useAppend()
@@ -138,5 +173,5 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
         return update
     }
 
-    return { useAppend, useRemove, useUpdate, useDataStructure, useData }
+    return { useAppend, useRemove, useUpdate, useDataStructure, useData, useSetInitialData }
 }
