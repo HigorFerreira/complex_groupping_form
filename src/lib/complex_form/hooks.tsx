@@ -87,7 +87,14 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
         useEffect(() => {
             initial?.current && (initial.current.renders += 1)
             if(ref_object?.current !== undefined) {
-                ref_object.current = data
+                const dataWithKeys: RecordArrayGroups<TGroups, TItem> = {}
+                for (const group_key in data) {
+                    const group = group_key as TGroups
+                    dataWithKeys[group] = data[group]?.map(item =>
+                        item.key ? item : { ...item, key: uuidv4() }
+                    ) as Array<Partial<TItem>>
+                }
+                ref_object.current = dataWithKeys
                 if((initial?.current.renders ?? Number.MAX_SAFE_INTEGER) >= maxRenders){
                     setStructureCounter?.(prev => prev+1)
                     setCounter?.(prev => prev+1)
