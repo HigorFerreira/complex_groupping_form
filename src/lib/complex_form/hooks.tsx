@@ -1,5 +1,5 @@
-import { useContext as useReactContext,/* useEffect, useMemo, useRef, */type Context, useCallback } from 'react'
-import type { ContextType, BaseItem, GetDataFunction,/* DataObjItems*/ } from './types'
+import { useContext as useReactContext,/* useEffect, useMemo, useRef, */type Context, useCallback, useMemo } from 'react'
+import type { ContextType, BaseItem, RecordArrayGroups } from './types'
 // import { DataOperations } from './utils'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,162 +14,102 @@ export function makeHooks<TGroups extends string, TItem extends Partial<BaseItem
 ) {
 
     function useDataStructure() {
-        const { group_list } = useContext('useDataStructure', Context)
-        const ret: NonNullable<typeof group_list> = !group_list
-            ? {}
-            : group_list
-        return ret
+        const { structureCounter, data } = useContext('useData', Context)
+        return useMemo(() => {
+            /**
+             * O structureCounter controla quando atualizar os dados no UI
+             * isso vai ajudar a atualizar os casos em que "células de formulário"
+             * são adicionadas dinânmicamente via append ou remove, evitando que o onChange deles
+             * causem renderizações infinitas
+             */
+            return data?.current
+        }, [ structureCounter, data ])
     }
 
     function useData() {
-        const { data_obj, group_list } = useContext('useData', Context)
-        const get_data = useCallback(
-            ((key: string | null = null): any => {
-                // 1. Handle string key (returns single item or undefined)
-                if (typeof key === "string") {
-                    return data_obj?.[key];
-                }
-
-                // 2. Handle null/undefined (returns the grouped record)
-                const data = {} as Partial<Record<TGroups, TItem[]>>;
-                
-                if (group_list) {
-                    (Object.keys(group_list) as TGroups[]).forEach((groupKey) => {
-                        // @ts-expect-error
-                        data[groupKey] = group_list[groupKey]?.map(item => {
-                            return data_obj?.[item.key ?? ''];
-                        }) ?? [];
-                    });
-                }
-
-                return data;
-            }) as GetDataFunction<TGroups, TItem>, // Cast to your overloaded type here
-            [data_obj, group_list]
-        );
-
-        return get_data
+        const { counter, data } = useContext('useData', Context)
+        return useMemo(() => {
+            // O counter controla quando atualizar os dados no UI
+            return data?.current
+        }, [ counter, data ])
     }
 
     function useAppend() {
-        const { setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useAppend', Context)
-        function append(group: TGroups, item: Partial<Omit<TItem, 'key'>>) {
-            const key = uuidv4()
-            // @ts-expect-error Annotation throuble
-            setDataArr?.(prev => [
-                ...prev,
-                { ...item, key }
-            ])
-            // @ts-expect-error Annotation throuble
-            setDataObj?.(prev => ({
-                ...prev,
-                [key]: {
-                    ...item,
-                    key
-                }
-            }))
-            setGroupList?.(prev => ({
-                ...prev,
-                [group]: [
-                    ...(prev?.[group]??[]),
-                    { ...item, key }
-                ]
-            }))
-            setItemGroup?.(prev => ({
-                ...prev,
-                [key]: group,
-            }))
+        const { setStructureCounter, setCounter, data: ref } = useContext('useAppend', Context)
+        function append(group: TGroups, adding_item: Partial<Omit<TItem, 'key'>>) {
+            const data = ref?.current
+            if(!data) throw new Error('No data')
+            if(!data[group]){
+                data[group] = []
+            }
+            const item = { ...adding_item, key: uuidv4() } as Partial<TItem>
+            data[group].push(item)
+            setStructureCounter?.(prev => prev+1)
+            setCounter?.(prev => prev+1)
         }
-        
         return append
     }
 
     function useRemove(){
-        const { data_obj, data_arr, group_list, item_group, setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useRemove', Context)
-        function remove(key: string){
-            const item = data_obj?.[key]
-            if(!item) return null
-            const removed_item = { ...item }
-
-            const new_data_obj = { ...(data_obj??{}) }
-            const new_data_arr = [ ...(data_arr??[]) ]
-            const new_group_list = { ...(group_list??{}) } as typeof group_list
-            const new_item_group = { ...(item_group??{}) } as typeof item_group
-
-            delete new_data_obj[key]
-            new_data_arr.splice(new_data_arr.findIndex(item => item.key === key), 1)
-            {
-                const group = new_group_list?.[new_item_group?.[key] as TGroups]
-                group?.splice(group.findIndex(item => item.key === key), 1)                
+        const { setStructureCounter, setCounter, data: ref } = useContext('useRemove', Context)
+        function remove(key: string): boolean {
+            const data = ref?.current
+            if(!data) throw new Error('No data')
+            for(const _group_key of Object.keys(data)){
+                const group_key = _group_key as TGroups
+                const remove_index = data[group_key]?.findIndex(({ key: k }) => k === key)
+                if(remove_index === undefined || remove_index < 0) continue
+                data[group_key]?.splice(remove_index, 1)
+                setStructureCounter?.(prev => prev+1)
+                setCounter?.(prev => prev+1)
+                return true
             }
-            delete new_item_group?.[key]
-            
-            setDataArr?.(new_data_arr)
-            setDataObj?.(new_data_obj)
-            setGroupList?.(new_group_list??{})
-            setItemGroup?.(new_item_group??{})
-
-            return removed_item
+            return false
         }
         return remove
     }
 
-    function useSetInitialData() {
-        const { initialDataSet, setDataArr, setDataObj, setGroupList, setItemGroup } = useContext('useSetInitialData', Context)
-
-        function setInitialData(grouped_data: Partial<Record<TGroups, Array<Partial<Omit<TItem, 'key'>> & { key?: string }>>>) {
-            if (initialDataSet?.current) return
-
-            const new_data_arr: Array<TItem> = []
-            const new_data_obj: Record<string, Partial<TItem>> = {}
-            const new_group_list: Partial<Record<TGroups, Array<TItem>>> = {}
-            const new_item_group: Partial<Record<string, TGroups>> = {}
-
-            ;(Object.keys(grouped_data) as TGroups[]).forEach(group => {
-                const items = grouped_data[group] ?? []
-                new_group_list[group] = []
-                items.forEach(item => {
-                    const key = item.key ?? uuidv4()
-                    const full_item = { ...item, key } as TItem
-                    new_data_arr.push(full_item)
-                    new_data_obj[key] = full_item
-                    new_group_list[group]!.push(full_item)
-                    new_item_group[key] = group
-                })
-            })
-
-            setDataArr?.(new_data_arr)
-            setDataObj?.(new_data_obj)
-            setGroupList?.(new_group_list)
-            setItemGroup?.(new_item_group)
-
-            if (initialDataSet) initialDataSet.current = true
+    function useSetInitialData(data: RecordArrayGroups< TGroups, TItem >, maxRenders: number = 1) {
+        const { setStructureCounter, setCounter, data: ref_object, initial } = useContext('useSetInitialData', Context)
+        if(initial?.current.renders){
+            initial.current.renders += 1
         }
-
-        return setInitialData
+        if(ref_object?.current) {
+            ref_object.current = data
+            if(initial?.current.renders??Number.MAX_SAFE_INTEGER >= maxRenders){
+                setStructureCounter?.(prev => prev+1)
+                setCounter?.(prev => prev+1)
+            }
+        }
+        const reset = useCallback(() => {
+            if(initial?.current && initial.current.renders >= maxRenders){
+                initial.current.renders = 0
+            }
+        }, [ initial ])
+        
+        return reset
     }
 
     function useUpdate(){
-        const { data_obj, setDataObj } = useContext('useUpdate', Context)
+        const { setCounter, data: ref } = useContext('useUpdate', Context)
         const append = useAppend()
         function update(key: string, group: TGroups, item: Partial<Omit<TItem, 'key'>>) {
-            const current_item = data_obj?.[key]
-            if(!current_item) {
+            const data = ref?.current
+            if(!data) throw new Error('No data')
+            
+            const found_item = data?.[group]?.findIndex(({ key: k }) => k===key)
+            if(found_item === undefined || found_item < 0) {
                 append(group, item)
+                return
             }
-            else {
-                setDataObj?.(prev => {
-                    const current_item = prev?.[key]
-                    return {
-                        ...prev,
-                        [key]: {
-                            ...current_item,
-                            ...item
-                        }
-                    }
-                })
+            if(data?.[group]?.[found_item]){
+                data[group][found_item] = {
+                    ...data[group][found_item],
+                    ...item
+                }
+                setCounter?.(prev => prev+1)
             }
         }
-
         return update
     }
 
